@@ -27,7 +27,7 @@ r_e = 1.275  # Chlorine equilibrium separation in Angstroms
 # Define r values in angrstoms:
 r_min = 0.01
 r_max = 10
-n_steps = 1000
+n_steps = 4000
 r = np.linspace(r_min, r_max, n_steps)  # grid of r values in Angrstoms
 
 V_r = De*(np.exp(-2*a*(r - r_e)) - 2*np.exp(-a*(r - r_e)))  # Morse potential in eV
@@ -75,7 +75,7 @@ ax1.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
 # Set axes limits/labels
 ax1.set_xlim(0.75, 5)
 ax1.set_ylim(-5, 0.1)
-ax1.set_xlabel(r"Internuclear separation ($\AA$)")
+ax1.set_xlabel(r"Internuclear Separation ($\AA$)")
 ax1.set_ylabel("Energy (eV)")
 ax1.set_title("Morse potential and Energy Eigenvalues (Full Well)")
 plt.savefig("full_morse_and_energies.png")
@@ -98,10 +98,44 @@ ax2.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
 # Set axes limits/labels
 ax2.set_xlim(1.1, 1.5)
 ax2.set_ylim(-4.65, -4.2)
-ax2.set_xlabel(r"Internuclear separation ($\AA$)")
+ax2.set_xlabel(r"Internuclear Separation ($\AA$)")
 ax2.set_ylabel("Energy (eV)")
 ax2.set_title("Morse potential and Energy Eigenvalues (Bottom of Well)")
 plt.savefig("lower_well_morse_energies.png")
 f2.show()
+
+# Calculate probability distribution for first few energy states
+# Normalize wave functions
+U0 = U[:, 0]
+mod_U0 = np.multiply(np.conj(U0), U0)
+mod_U0_norm = mod_U0/np.linalg.norm(mod_U0)
+
+U1 = U[:, 1]
+mod_U1 = np.multiply(np.conj(U1), U1)
+mod_U1_norm = mod_U1/np.linalg.norm(mod_U1)
+
+U2 = U[:, 2]
+mod_U2 = np.multiply(np.conj(U2), U2)
+mod_U2_norm = mod_U2/np.linalg.norm(mod_U2)
+
+
+f3, ax3 = plt.subplots()
+ground, = ax3.plot(r, mod_U0_norm)
+first_excited, = ax3.plot(r, mod_U1_norm)
+second_excited, = ax3.plot(r, mod_U2_norm)
+
+# Add legend
+ax3.legend([ground, first_excited, second_excited],
+           ["n = 0", "n = 1", "n = 2"],
+           loc="best")
+
+# Set axes limits/labels
+ax3.set_xlim(1.1, 1.45)
+ax3.set_ylim(0, 0.25)
+ax3.set_xlabel(r"Internuclear Separation ($\AA$)")
+ax3.set_ylabel(r"Probability of Separation (|$U^2$|)")
+ax3.set_title("Probability Distributions for Ground State and First Two Excited States")
+plt.savefig("morse_prob_distribs.png")
+f3.show()
 
 plt.show()
