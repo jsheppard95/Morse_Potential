@@ -138,4 +138,17 @@ ax3.set_title("Probability Distributions for Ground State and First Two Excited 
 plt.savefig("morse_prob_distribs.png")
 f3.show()
 
+print("Calculated Ground State Energy (eV):", E_u[0])
+
+# Analytical solution for eigenenergies
+# En = hv0(n + 1/2) - [hv0(n + 1/2)]^2/4De
+# v0 = (a/2pi)*sqrt(2De/m)
+# write out hv0*c/c:
+# hv0 = a*hbarc*sqrt(2De/mc^2)
+# Then shift energies down by De to match location of Morse
+n_vals = np.arange(n_steps)
+hv0 = a*hbar_c*np.sqrt(2*De/m_cl)
+En_act = (hv0*(n_vals + 0.5) - (((hv0*(n_vals + 0.5))**2)/(4*De))) - De
+print("Actual Ground State Energy (eV):", En_act[0])
+
 plt.show()
