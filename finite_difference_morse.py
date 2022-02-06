@@ -70,9 +70,16 @@ for i in range(0, 19, 2):
     energy_level_string = "n = " + str(i)
     ax1.text(-0.1, E_u[i] + 0.05, energy_level_string)
 
+# Display equilibrium radius
+re_line = ax1.axvline(x=r_e, color="green", linestyle="dotted")
+
 # Add legend
-ax1.legend([morse, energy], ["Morse Potential V(r)", "Energy Eigenvalue"],
-           loc="center left", bbox_to_anchor=(.75, 0.5))
+ax1.legend([morse, energy, re_line],
+           ["Morse Potential V(r)",
+            "Energy Eigenvalue",
+            "Equilibrium Separation"],
+           loc="center left", bbox_to_anchor=(.5, 0.5))
+
 
 # Set axes limits/labels
 ax1.set_xlim(-0.2, 5.2)
@@ -93,8 +100,14 @@ for i in range(0, 7):
     energy_level_string = "n = " + str(i)
     ax2.text(1.27, E_u[i] + 0.01, energy_level_string)
 
+# Display equilibrium radius
+re_line = ax2.axvline(x=r_e, color="green", linestyle="dotted")
+
 # Add legend
-ax2.legend([morse, energy], ["Morse Potential V(r)", "Energy Eigenvalue"],
+ax2.legend([morse, energy, re_line],
+           ["Morse Potential V(r)",
+            "Energy Eigenvalue",
+            "Equilibrium Separation"],
            loc="best")
 
 # Set axes limits/labels
@@ -126,9 +139,12 @@ ground, = ax3.plot(r, mod_U0_norm)
 first_excited, = ax3.plot(r, mod_U1_norm)
 second_excited, = ax3.plot(r, mod_U2_norm)
 
+# Display equilibrium radius
+re_line = ax3.axvline(x=r_e, color="red", linestyle="dotted")
+
 # Add legend
-ax3.legend([ground, first_excited, second_excited],
-           ["n = 0", "n = 1", "n = 2"],
+ax3.legend([ground, first_excited, second_excited, re_line],
+           ["n = 0", "n = 1", "n = 2", "Equilibrium Separation"],
            loc="best")
 
 # Set axes limits/labels
