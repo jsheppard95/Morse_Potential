@@ -16,8 +16,10 @@ import matplotlib.pyplot as plt
 # define physical constants
 hbar_c = 1973  # hbar*c in eV*Angstroms
 m_cl_amu = 35  # mass of chlorine in amu
+m_h_amu = 1  # mass of hydrogen in amu
+m = m_cl_amu*m_h_amu/(m_cl_amu + m_h_amu)  # reduced mass
 amu_MeV_by_c2 = 931.49432  # conversion factor 1 amu = 931.49432 MeV/c^2
-m_cl = m_cl_amu * amu_MeV_by_c2 * 1e6  # mass of chlorine in eV
+m_c2 = m * amu_MeV_by_c2 * 1e6  # mass of chlorine in eV
 
 De = 4.618  # Morse potential well depth in eV
 a = 1.869  # Morse potential "a" parameter in Angstroms^-1
@@ -39,7 +41,7 @@ V = np.diag(V_r)
 # K = -hbar^2/(2md^2)*diagonal_matrix_-2_1 (see derivation)
 # const C = =hbar^2/(2md^2) = (hbar*c)^2(2mc^2d^2), mc^2 has energy units, eV)
 d = r[1] - r[0]  # incremental step size
-ke_factor = -(hbar_c**2)/(2*m_cl*(d**2))
+ke_factor = -(hbar_c**2)/(2*m_c2*(d**2))
 # first create diagonal matrix of -2
 K = np.diag(-2*np.ones(n_steps))
 # Now fill elements above and below diagonal with 1
@@ -63,19 +65,19 @@ f1, ax1 = plt.subplots()
 morse, = ax1.plot(r, V_r)
 
 # Plot Energy Eigenvalues
-for i in range(0, 141, 20):
+for i in range(0, 19, 2):
     energy, = ax1.plot(E_u[i]*np.ones(n_steps), "r--")
     energy_level_string = "n = " + str(i)
-    ax1.text(3.5, E_u[i] + 0.05, energy_level_string)
+    ax1.text(-0.1, E_u[i] + 0.05, energy_level_string)
 
 # Add legend
-ax1.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
+ax1.legend([morse, energy], ["Morse Potential V(r)", "Energy Eigenvalue"],
            loc="center left", bbox_to_anchor=(.75, 0.5))
 
 # Set axes limits/labels
-ax1.set_xlim(0.75, 5)
-ax1.set_ylim(-5, 0.1)
-ax1.set_xlabel(r"Internuclear Separation ($\AA$)")
+ax1.set_xlim(-0.2, 5.2)
+ax1.set_ylim(-4.75, 0.1)
+ax1.set_xlabel(r"Interatomic Separation, r, ($\AA$)")
 ax1.set_ylabel("Energy (eV)")
 ax1.set_title("Morse potential and Energy Eigenvalues (Full Well)")
 plt.savefig("full_morse_and_energies.png")
@@ -92,13 +94,13 @@ for i in range(0, 7):
     ax2.text(1.27, E_u[i] + 0.01, energy_level_string)
 
 # Add legend
-ax2.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
+ax2.legend([morse, energy], ["Morse Potential V(r)", "Energy Eigenvalue"],
            loc="best")
 
 # Set axes limits/labels
-ax2.set_xlim(1.1, 1.5)
-ax2.set_ylim(-4.65, -4.2)
-ax2.set_xlabel(r"Internuclear Separation ($\AA$)")
+ax2.set_xlim(0.9, 2)
+ax2.set_ylim(-4.65, -2.4)
+ax2.set_xlabel(r"Interatomic Separation, r, ($\AA$)")
 ax2.set_ylabel("Energy (eV)")
 ax2.set_title("Morse potential and Energy Eigenvalues (Bottom of Well)")
 plt.savefig("lower_well_morse_energies.png")
@@ -130,10 +132,10 @@ ax3.legend([ground, first_excited, second_excited],
            loc="best")
 
 # Set axes limits/labels
-ax3.set_xlim(1.1, 1.45)
-ax3.set_ylim(0, 0.25)
-ax3.set_xlabel(r"Internuclear Separation ($\AA$)")
-ax3.set_ylabel(r"Probability of Separation (|$U^2$|)")
+ax3.set_xlim(0.9, 1.7)
+ax3.set_ylim(0, 0.14)
+ax3.set_xlabel(r"Interatomic Separation, r, ($\AA$)")
+ax3.set_ylabel(r"Probability of Separation (|$U(r)^2$|)")
 ax3.set_title("Probability Distributions for Ground State and First Two Excited States")
 plt.savefig("morse_prob_distribs.png")
 f3.show()
@@ -147,7 +149,7 @@ print("Calculated Ground State Energy (eV):", E_u[0])
 # hv0 = a*hbarc*sqrt(2De/mc^2)
 # Then shift energies down by De to match location of Morse
 n_vals = np.arange(n_steps)
-hv0 = a*hbar_c*np.sqrt(2*De/m_cl)
+hv0 = a*hbar_c*np.sqrt(2*De/m_c2)
 En_act = (hv0*(n_vals + 0.5) - (((hv0*(n_vals + 0.5))**2)/(4*De))) - De
 print("Actual Ground State Energy (eV):", En_act[0])
 
