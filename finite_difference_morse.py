@@ -23,7 +23,6 @@ De = 4.618  # Morse potential well depth in eV
 a = 1.869  # Morse potential "a" parameter in Angstroms^-1
 # (1 Angstrom = 10^-10 m)
 r_e = 1.275  # Chlorine equilibrium separation in Angstroms
-#r_e = 0.1
 
 # Define r values in angrstoms:
 r_min = 0.01
@@ -57,19 +56,52 @@ H = K + V
 # HU = EU, U = wave function
 [E_u, U] = spla.eigh(H)  # E_u = eigenenergies, U = eigenvectors
 
-print(E_u.shape)
-print(U.shape)
-
-print(E_u[:5])
-
 # Plot energy eigenvalues alongside the Morse Potential
+# Plot every 20th energy level from 0 to 200 alongside full Morse well
+f1, ax1 = plt.subplots()
+# Plot Morse Potential
+morse, = ax1.plot(r, V_r)
 
-# Plot Morse Potential in interesting region
-#f, ax = plt.subplots()
-#ax.plot(r, V_r)
-#ax.set_xlim(0, 5)
-#ax.set_ylim(-7, 2)
-#f.show()
-#input("Press <Return> to close")
-plt.plot(r, V_r)
+# Plot Energy Eigenvalues
+for i in range(0, 141, 20):
+    energy, = ax1.plot(E_u[i]*np.ones(n_steps), "r--")
+    energy_level_string = "n = " + str(i)
+    ax1.text(3.5, E_u[i] + 0.05, energy_level_string)
+
+# Add legend
+ax1.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
+           loc="center left", bbox_to_anchor=(.75, 0.5))
+
+# Set axes limits/labels
+ax1.set_xlim(0.75, 5)
+ax1.set_ylim(-5, 0.1)
+ax1.set_xlabel(r"Internuclear separation ($\AA$)")
+ax1.set_ylabel("Energy (eV)")
+ax1.set_title("Morse potential and Energy Eigenvalues (Full Well)")
+plt.savefig("full_morse_and_energies.png")
+f1.show()
+
+# Plot of first few energy eigenvalues
+f2, ax2 = plt.subplots()
+# Plot Morse Potential
+morse, = ax2.plot(r, V_r)
+# Plot Energy Eigenvalues
+for i in range(0, 7):
+    energy, = ax2.plot(E_u[i]*np.ones(n_steps), "r--")
+    energy_level_string = "n = " + str(i)
+    ax2.text(1.27, E_u[i] + 0.01, energy_level_string)
+
+# Add legend
+ax2.legend([morse, energy], ["Morse Potential", "Energy Eigenvalue"],
+           loc="best")
+
+# Set axes limits/labels
+ax2.set_xlim(1.1, 1.5)
+ax2.set_ylim(-4.65, -4.2)
+ax2.set_xlabel(r"Internuclear separation ($\AA$)")
+ax2.set_ylabel("Energy (eV)")
+ax2.set_title("Morse potential and Energy Eigenvalues (Bottom of Well)")
+plt.savefig("lower_well_morse_energies.png")
+f2.show()
+
 plt.show()
