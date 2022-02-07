@@ -156,7 +156,25 @@ ax3.set_title("Probability Distributions for Ground State and First Two Excited 
 plt.savefig("morse_prob_distribs.png")
 f3.show()
 
-print("Calculated Ground State Energy (eV):", E_u[0])
+f4, ax4 = plt.subplots()
+# Plot morse potential only
+morse, = ax4.plot(r, V_r)
+# Display equilibrium radius
+re_line = ax4.axvline(x=r_e, color="green", linestyle="dotted")
+# Add legend
+ax4.legend([morse, re_line],
+           ["Morse Potential V(r)",
+            "Equilibrium Separation"],
+           loc="center left", bbox_to_anchor=(.5, 0.5))
+
+# Set axes limits/labels
+ax4.set_xlim(-0.2, 5.2)
+ax4.set_ylim(-4.75, 0.1)
+ax4.set_xlabel(r"Interatomic Separation, r, ($\AA$)")
+ax4.set_ylabel("Potential Energy, V(r) (eV)")
+ax4.set_title("Morse Potential vs. Interatomic Separation")
+plt.savefig("morse_only.png")
+f4.show()
 
 # Analytical solution for eigenenergies
 # En = hv0(n + 1/2) - [hv0(n + 1/2)]^2/4De
@@ -167,6 +185,46 @@ print("Calculated Ground State Energy (eV):", E_u[0])
 n_vals = np.arange(n_steps)
 hv0 = a*hbar_c*np.sqrt(2*De/m_c2)
 En_act = (hv0*(n_vals + 0.5) - (((hv0*(n_vals + 0.5))**2)/(4*De))) - De
-print("Actual Ground State Energy (eV):", En_act[0])
+
+for i in range(7):
+    print("Calculated Ground State Energy (eV), n = %s: %s" % (i, E_u[i]))
+    print("Actual Ground State Energy (eV), n = %s: %s" % (i, En_act[i]))
+    print("")
+
+# Find energy level/eigenstate with E > De (dissociation energy)
+diff = 1000
+dissociation_n = 0
+for i in range(len(E_u)):
+    if abs(De - E_u[i]) < diff:
+        diff = abs(De - E_u[i])
+        dissociation_n = i
+
+# Plot wave function for E_u[dissociation_n]
+Ud = U[:, dissociation_n]
+mod_Ud = np.multiply(np.conj(Ud), Ud)
+mod_Ud_norm = mod_Ud/np.linalg.norm(mod_Ud)
+
+
+f5, ax5 = plt.subplots()
+dissoc, = ax5.plot(r, mod_Ud_norm)
+
+# Display equilibrium radius
+re_line = ax5.axvline(x=r_e, color="red", linestyle="dotted")
+zero_E_line = ax5.axvline(x=4.5, color="green", linestyle="dashed")
+dissoc_str = "Calculated Dissociation Energy (n = {n}): {dissoc_E:.2f} eV".format(n=dissociation_n, dissoc_E=E_u[dissociation_n])
+# Add legend
+ax5.legend([dissoc, re_line, zero_E_line],
+           [dissoc_str, "Equilibrium Separation", "V(r) ~ 0"],
+           loc="best")
+
+# Set axes limits/labels
+ax5.set_xlim(0.65, 5.25)
+ax5.set_ylim(0, 0.04)
+ax5.set_xlabel(r"Interatomic Separation, r, ($\AA$)")
+ax5.set_ylabel(r"Probability of Separation (|$U(r)^2$|)")
+ax5.set_title(r"Probability Distributions for Energy State with $E > D_e$")
+plt.savefig("dissoc_prob_distrib.png")
+f3.show()
+
 
 plt.show()
