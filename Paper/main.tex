@@ -29,7 +29,7 @@ raggedbottom, % allow variation at bottom
 
 \preprint{UCSB Chemistry 222B}
 
-\title{Numerical solution to the time independent Scrhödinger equation for HCl in a Morse potential using finite difference}
+\title{Numerical solution to the time-independent Schrödinger equation for HCl in a Morse potential using finite difference}
 % Force line breaks with \\
 \author{Jackson Sheppard}
 \affiliation{%
@@ -37,15 +37,14 @@ Chemistry Department, University of California,
 Santa Barbara, CA 93106-9530}
 
 \begin{abstract}
-Here we present a numerical solution to the time independent Schrödinger equation for the diatomic HCl
-molecule in a Morse potential well using the method of finite difference to calculate the energy
+Here we present a numerical solution to the time-independent Schrödinger equation for the diatomic molecule HCl in a Morse potential well using the method of finite difference to calculate the energy
 eigenvalues and corresponding eigenstates in $r$-coordinate space, where $r$ is the interatomic
 separation between the hydrogen and chlorine atoms. This method considers the continuous radial
 coordinate $r$ as an evenly spaced grid of $n$ points and approximates the derivative of the
 function $f(r)$ as $\Delta f/ \Delta r$. In doing so, one can solve the eigenvalue equation
-$HU(r) = EU(r)$ as a discrete problem yielding $n$ energy eigenvalue and $n$ eigenvectors $U(r)$, each
-evaluated at the $n$ radial coordinate points. Implementing these methods for HCl using
-Python yields a ground state energy $E_0 = -4.587$ eV, in excellent agreement with that found from
+$HU(r) = EU(r)$ as a discrete problem yielding $n$ energy eigenvalues $\{E_n\}$ and $n$ eigenvectors $\{U_n(r)\}$, each
+evaluated at the $n$ radial coordinates. Implementing these methods for HCl using
+Python yields a ground state energy $E_0 = -4.434$ eV, in excellent agreement with that found from
 the analytical solution to this differential equation.
 \end{abstract}
 
@@ -55,7 +54,7 @@ the analytical solution to this differential equation.
 \section{\label{sec:Intro}Introduction}
 
 The Morse potential $V(r)$, first introduced by Philip M. Morse, describes the interaction between
-atoms in a diatomic molecule, yielding the energy stored in the bond as function of atomic
+atoms in a diatomic molecule and can be thought of as the energy stored in the bond as function of atomic
 separation $r$. This potential energy takes the form of an anharmonic oscillator with respect to
 $r$ and thus has energy eigenvalues perturbed from that of the standard quantum harmonic
 oscillator. The Morse potential takes the form:
@@ -72,14 +71,14 @@ then rewrite Eq. \ref{morse} as follows:
 \end{equation}
 giving the functional form employed in this analysis.
 
-The time-independent Schrödinger equation for the radial part of the wave function $U(r)$
+The time-independent Schrödinger equation for the wave function $U(r)$
 is then:
 \begin{align}
     -\frac{\hbar^2}{2m}\frac{d^2U(r)}{dr^2} + V(r)U(r) &= EU(r) \label{TISE}\\
     HU(r) &= EU(r)
 \end{align}
-where $H = K + V$ is the Hamiltonian operator expressed as a sum of the kinetic energy $p^2/2m$
-and $V = V(r)$ is the Morse potential and $m$ is the reduced mass of HCl.
+where $m = m_Hm_{Cl}/(m_H + m_Cl)$ is the reduced mass of HCl and $H = K + V$ is the Hamiltonian operator expressed as a sum of the kinetic energy $K = (-\hbar^2/2m)d^2/dr^2$
+and Morse potential energy $V = V(r)$ terms.
 
 Next we employ the method of finite difference by approximating the derivative of the wave
 function $U(r)$ evaluated at a discrete radial position $r_i$ as follows:
@@ -87,19 +86,17 @@ function $U(r)$ evaluated at a discrete radial position $r_i$ as follows:
     \frac{dU}{dr}\Bigr|_{r=r_i} \approx \frac{\Delta U}{\Delta r}\Bigr|_{r=r_i} = \frac{U(r_{i+1}) - U(r_{i-1})}{r_{i+1} - r_{i-1}} = \frac{U_{i+1} - U_{i-1}}{2d}
 \end{equation}
 where $d$ is the incremental step size in $r$. To evaluate the second derivative, we consider
-the Taylor expansion of the continuous function $f(x)$ shift by $+\Delta x$ and $-\Delta x$,
-where the magnitude of said shift is small. We have:
+the Taylor expansion of the continuous function $f(x)$ shifted by small amounts $+\Delta x$ and $-\Delta x$, giving:
 \begin{align}
     f(x + \Delta x) & \approx f(x) + \frac{df}{dx}\Delta x + \frac{1}{2}\frac{d^2f}{dx^2}\Delta x^2 \\
     f(x - \Delta x) & \approx f(x) - \frac{df}{dx}\Delta x + \frac{1}{2}\frac{d^2f}{dx^2}\Delta x^2
 \end{align}
-
-Adding the expressions above yields:
+Adding the two expressions above yields:
 \begin{align}
     f(x + \Delta x) + f(x - \Delta x) & \approx 2f(x) + \frac{d^2f}{dx^2}\Delta x^2 \\
     \frac{d^2f}{dx^2} & \approx \frac{f(x + \Delta x) - 2f(x) + f(x - \Delta x)}{\Delta x^2}
 \end{align}
-Finally, we translate the expression about to our discrete system allowing us to numerically
+We can then translate the expression above to our discrete system allowing us to numerically
 calculate the value of $d^2U/dr^2$ in the time-independent Schrödinger equation at each radial
 point in our grid. We thus have:
 \begin{equation} \label{finite-diff}
@@ -107,15 +104,15 @@ point in our grid. We thus have:
 \end{equation}
 
 Our next step in the method of finite difference is to insert the approximation of the second 
-derivative in Eq. \ref{finite-diff} into Eq. \ref{TISE}. In doing so we consider the
+derivative in Eq. \ref{finite-diff} into Eq. \ref{TISE}. In doing so, we consider the
 continuous functions $U(r)$ and $V(r)$ as discrete functions evaluated at each grid point $i$,
 where $i$ ranges from $1$ to $n$. This gives:
 \begin{equation} \label{disc_TISE}
     -\frac{\hbar^2}{2md^2}(U_{i+1} - 2U_i + U_{i-1}) + V_iU_i = EU_i
 \end{equation}
-We can then express Eq. \ref{disc_TISE} by noting the first and second terms include an $n$ by $n$
-kinetic energy matrix $K$ with $2$ along the diagonal and $-1$ above and below each diagonal element and an $n$ by $n$ potential energy matrices $V$ with diagonal elements equal to the Morse potential
-$V(r)$ evaluated at each radial coordinate. Each multiplies an $n$-element column vector $U$ whose entries are the wave function evaluated at each radial coordinate. This gives:
+We can then rewrite Eq. \ref{disc_TISE} by noting the first and second terms include an $n$ by $n$
+kinetic energy matrix $K$ with $2$ along the diagonal and $-1$ above and below the diagonal and an $n$ by $n$ diagonal potential energy matrix $V$ with elements equal to the Morse potential
+$V(r)$ evaluated at each radial coordinate, respectively. Each multiplies an $n$-element column vector $U$ whose entries are the wave function evaluated at each radial coordinate. This gives:
 \begin{equation} \label{big-matrix}
     -\frac{\hbar^2}{2md^2}\begin{bmatrix} 
     -2 & 1 & 0 & \dots & 0 \\
@@ -153,15 +150,15 @@ $V(r)$ evaluated at each radial coordinate. Each multiplies an $n$-element colum
         U_n
     \end{bmatrix}
 \end{equation}
-Eq. \ref{big-matrix} can then be re-written compactly as:
+Eq. \ref{big-matrix} can then be written compactly as:
 \begin{align}
     KU + VU &= EU \\
     (K + V)U &= EU \\ \label{finite-diff-TISE}
     HU = EU
 \end{align}
+
 The method of finite difference in the context of the time-independent Schrödinger equation
-therefore leads to the diagonalization of Eq. \ref{finite-diff-TISE}, where $K$ and $V$ in
-$H = K + V$ are defined in Eq. \ref{big-matrix}, to numerically determine the energy eigenvalues
+therefore leads to the diagonalization of the Hamiltonian $H$ in Eq. \ref{finite-diff-TISE}, where $K$ and $V$ are defined in Eq. \ref{big-matrix}, to numerically determine the energy eigenvalues
 and corresponding eigenstates for HCl in a Morse potential.
 
 \section{\label{sec:Method}Methods}
@@ -185,7 +182,7 @@ constants in Eq. \ref{big-matrix} were taken from NIST by rewriting the constant
     \frac{\hbar^2}{2md^2} = \frac{(\hbar c)^2}{2mc^2d^2}
 \end{equation}
 Where $m$ is the reduced mass of the HCl diatomic system whose atomic masses are given in amu.
-These parameters are summarized in Table \ref{tab:MorseVals} with and lead to the plot of the
+These parameters are summarized in Table \ref{tab:MorseVals} and produce the plot of the
 corresponding Morse potential shown in Fig. \ref{fig:MorseOnly}. The full source code for
 replication of the following results is then accessible through GitHub at
 \href{https://github.com/jsheppard95/Morse_Potential}{https://github.com/jsheppard95/Morse\_Potential}.
@@ -217,11 +214,11 @@ equilibrium separation $r_e$.}
 \section{\label{sec:Results}Results}
 Applying the previously described method of finite difference to the diatomic molecule HCl with
 parameters shown in Table \ref{tab:MorseVals} yields a calculated ground state energy
-$E_0 = -4.587$ eV. This and the next six excited state energy levels are shown in Table
+$E_0 = -4.434$ eV. This and the next six excited state energy levels are shown in Table
 \ref{tab:EnergyLevels} and displayed alongside the Morse potential in Fig.
 \ref{fig:MorseLowEnergies} and Fig. \ref{fig:MorseFullSpectrum}, the latter of which includes higher
-energy levels closer to the dissociation energy. We compare the energy levels calculated using finite
-difference to those found from the analytical solution shown below:
+energy levels closer to the dissociation energy. We then compare the energy levels calculated using finite
+difference to those found using the following analytical result:
 \begin{align}
     E_n &= h\nu_0(n+1/2) - \frac{[h\nu_0(n+1/2)]^2}{4D_e} \\
     \nu_0 &= \frac{a}{2\pi}\sqrt{\frac{2D_e}{m}} \\
@@ -229,14 +226,14 @@ difference to those found from the analytical solution shown below:
 \end{align}
 Note that we must subtract the constant energy offset $D_e$ from each analytically calculated
 energy level since $E = 0$ is defined as the minimum of the Morse well for the analytical
-solution as opposed to the dissociation energy $D_e$ as was defined in this calculation. Here we see
-that low energy levels have roughly even spacing agreeing with that of the traditional quantum harmonic
+solution as opposed to the dissociation energy $D_e$ as was defined in this numerical calculation. Here we see
+that low energy levels have roughly even spacing, agreeing with that of the traditional quantum harmonic
 oscillator. It is only at higher energy level that anharmonic effects have a noticeable perturbation on
-the energy levels.
+the energy level spacing.
 
 \begin{table}
 \centering
-\caption{\label{tab:EnergyLevels}First seven energy levels for the HCl diatomic molecule calculated
+\caption{\label{tab:EnergyLevels}First seven energy levels for the diatomic molecule HCl calculated
 using finite difference and analytical methods.}
 \noindent\makebox[\textwidth]{
 \begin{tabular}{l|c|c}
@@ -264,7 +261,7 @@ calculated using finite difference.}
 \includegraphics[width=0.67\textwidth]{full_morse_and_energies.png}
 \caption{\label{fig:MorseFullSpectrum} Plot of higher energy levels alongside the Morse
 potential $V(r)$ in eV for the diatomic molecule HCl versus the interatomic separation $r$. Here we see
-anharmonic effects developing at higher energy levels with the separation between levels increasing as
+anharmonic effects developing at higher energy levels with the separation between adjacent levels decreasing as
 $n$ increases.}
 \end{figure}
 
@@ -279,7 +276,7 @@ equilibrium separation as $n$ increases.
 \centering
 \includegraphics[width=0.67\textwidth]{morse_prob_distribs.png}
 \caption{\label{fig:MorseProbDistrib} Plot of probability distributions for the lowest three energy
-eigenstates $U(r)$ for HCl in the Morse potential. Here we see modest deviations from the result of the
+eigenstates $U_0(r)$, $U_1(r)$, and $U_2(r)$ of HCl in the Morse potential. Here we see modest deviations from the result of the
 traditional quantum harmonic oscillator.}
 \end{figure}
 
@@ -294,37 +291,38 @@ molecule can occur.
 \centering
 \includegraphics[width=0.67\textwidth]{dissoc_prob_distrib.png}
 \caption{\label{fig:DissocProbDistrib} Plot of the probability distribution for the $n = 142$
-eigenstate $U(r)$ for HCl in the Morse potential with energy $E_n = 4.65$ eV, just over the
-dissociation energy $D_e = 4.618$ eV. The equilibrium separation along with separations where the
-potential energy is roughly zero are indicated of the dotted red and dashed green lines, respectively.}
+eigenstate $U_{142}(r)$ of HCl in the Morse potential with energy $E_{142} = 4.65$ eV, just over the
+dissociation energy $D_e = 4.618$ eV. The equilibrium separation along with the separation beyond which the
+potential energy approaches zero are shown by the dotted red and dashed green lines, respectively.}
 \end{figure}
 
 \section{\label{sec:Conclusion_Future_Work}Conclusion and Further Analysis}
 We have thus presented a spectral decomposition of the diatomic molecule HCl in a Morse potential
 $V(r)$ shown in Eq. \ref{morse2}. We determine the ground state energy of this system to be
-$E_0 = -4.587$ eV and display the following six excited state energy levels in Table
+$E_0 = -4.434$ eV and display the next six excited state energy levels in Table
 \ref{tab:EnergyLevels}. Here we see excellent agreement between the energy levels determined by finite
 difference and analytical methods. Fig. \ref{fig:MorseLowEnergies} shows that low energy levels are
-roughly equally spaced agreeing with the result of the traditional quantum harmonic oscillator, while
+roughly equally spaced, agreeing with the result of the traditional quantum harmonic oscillator, while
 Fig. \ref{fig:MorseFullSpectrum} shows higher energy states are more closely separated due to
 anharmonic effects. This is also shown in Fig. \ref{fig:DissocProbDistrib} by unstable oscillations in
 this high-energy wave function leading to dissociation.
 
-Considering future work, one could first optimize the calculation by considering $r \leq 5$ Å, beyond
-which $V(r) \approx 0$, and develop a more quantitative comparison of the Morse potential energy levels
+Considering future work, one could first optimize the calculation by considering only $r \leq 5$ Å, beyond
+which $V(r) \rightarrow 0$. In addition, one could develop a more quantitative comparison between the energy levels of the Morse potential
 to those of the traditional quantum harmonic oscillator by numerically calculating successive energy
 level differences and comparing to those determined by anharmonicity constants of the HCl system.
-Further, one could consider the time evolution of this system using $U = \exp{(-iHt/\hbar)}$, where H
+Further, one could consider the time evolution of this system using the time evolution operator $U = \exp{(-iHt/\hbar)}$, where H
 is the discrete Hamiltonian calculated using finite difference. Finally, it would be interesting to
 perform a molecular dynamics simulation by considering the system classically and applying the Verlet
-algorithm in which the force acting on each atom is calculated as $F = -dV/Dr$ as the position are
+algorithm in which the force acting on each atom is calculated as $F = -dV/dr$ and the atomic positions are
 computed by solving Newton's equation. This would allow for the use molecular dynamics software to
-visualize molecular motion at low energy states and those near the dissociation energy.
+visualize molecular motion at low energy states and those near the dissociation energy where bonds can break
+from unstable oscillations.
 
 \section{\label{sec:References}References}
 \begin{thebibliography}{9}
 \bibitem{article}
-Srnec MN, Upadhyay S, Madura JD. 2017. A Python Program for Solving Scrodinger's Equation in
+Srnec MN, Upadhyay S, Madura JD. 2017. A Python Program for Solving Schrodinger's Equation in
 Undergraduate Physical Chemistry. J Chem Educ. 94:813-814 
 
 \bibitem{website}
