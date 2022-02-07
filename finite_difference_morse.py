@@ -19,7 +19,7 @@ m_cl_amu = 35  # mass of chlorine in amu
 m_h_amu = 1  # mass of hydrogen in amu
 m = m_cl_amu*m_h_amu/(m_cl_amu + m_h_amu)  # reduced mass
 amu_MeV_by_c2 = 931.49432  # conversion factor 1 amu = 931.49432 MeV/c^2
-m_c2 = m * amu_MeV_by_c2 * 1e6  # mass of chlorine in eV
+m_c2 = m * amu_MeV_by_c2 * 1e6  # reduced mass in eV
 
 De = 4.618  # Morse potential well depth in eV
 a = 1.869  # Morse potential "a" parameter in Angstroms^-1
