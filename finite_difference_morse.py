@@ -4,10 +4,6 @@ Equation including the Morse Potential for the energy eigenavalues and
 corresponding eigenstates.
 
 Author: Jackson Sheppard
-
-Sources:
-https://pubs.acs.org/doi/pdf/10.1021/acs.jchemed.7b00003
-https://www.youtube.com/watch?v=9Wzdwxwrcnw
 """
 import numpy as np
 import scipy.linalg as spla
